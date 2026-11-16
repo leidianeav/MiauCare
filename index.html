@@ -3,274 +3,153 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MiauCare</title>
+    <title>MiauCare Prototype</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand">
-          <div class="brand-mark">M</div>
-          <div>
-            <span class="brand-name">MiauCare</span>
-            <small>Pet Clinic</small>
-          </div>
+    <div class="canvas">
+      <div class="figma-topbar">
+        <div class="window-title-group">
+          <span class="arrow">‹</span>
         </div>
-
-        <nav class="nav">
-          <a class="nav-item active" href="#">
-            <span class="icon">⌂</span>
-            Dashboard
-          </a>
-          <a class="nav-item" href="#">
-            <span class="icon">🐾</span>
-            Pets
-          </a>
-          <a class="nav-item" href="#">
-            <span class="icon">🗓</span>
-            Agenda
-          </a>
-          <a class="nav-item" href="#">
-            <span class="icon">💊</span>
-            Medicamentos
-          </a>
-          <a class="nav-item" href="#">
-            <span class="icon">💬</span>
-            Mensagens
-          </a>
-          <a class="nav-item" href="#">
-            <span class="icon">⚙</span>
-            Configurações
-          </a>
-        </nav>
-
-        <div class="support-card">
-          <p>Suporte 24h</p>
-          <strong>+55 (11) 9000-0000</strong>
+        <div class="viewport-tabs">
+          <span class="tab active">Desktop · Principal · 1280 +</span>
+          <span class="tab">Mobile · 1 ...</span>
+          <span class="tab">Code component 1</span>
         </div>
-      </aside>
+      </div>
 
-      <main class="content">
-        <header class="topbar">
-          <div class="search-box">
-            <span>⌕</span>
-            <input type="text" value="Buscar pet, cirurgia..." aria-label="Buscar" />
+      <div class="mockup-row">
+        <section class="desktop-panel panel">
+          <div class="browser-header">
+            <div class="browser-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="browser-address">miau.care</div>
           </div>
 
-          <div class="topbar-actions">
-            <button class="icon-btn" aria-label="Notificações">🔔</button>
-            <button class="action-btn primary">+ Nova consulta</button>
-            <div class="profile-box">
-              <div class="avatar">LA</div>
-              <div>
-                <strong>Leidiane</strong>
-                <small>Veterinária</small>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <section class="hero">
-          <div class="hero-copy">
-            <p class="eyebrow">Boas-vindas, equipe</p>
-            <h1>Cuidados completos para cada bichinho.</h1>
-            <p class="subtitle">
-              Acompanhe saúde, rotina e tratamentos de forma simples e segura.
-            </p>
-
-            <div class="hero-actions">
-              <button class="action-btn primary">Ver pacientes</button>
-              <button class="action-btn secondary">Relatórios</button>
-            </div>
-          </div>
-
-          <div class="hero-visual">
-            <div class="pet-card">
-              <div class="pet-badge">+12%</div>
-              <div class="pet-figure">
-                <div class="pet-head">
-                  <span class="ear left"></span>
-                  <span class="ear right"></span>
-                  <span class="eye left"></span>
-                  <span class="eye right"></span>
-                  <span class="nose"></span>
-                </div>
-              </div>
-              <div class="pet-summary">
-                <h3>Milo</h3>
-                <small>Shih Tzu · 4 anos</small>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="stats-grid">
-          <article class="stat-card accent">
-            <div class="stat-top">
-              <span class="stat-label">Atendimentos hoje</span>
-              <span class="trend up">+18%</span>
-            </div>
-            <strong>38</strong>
-            <small>14 consultas e 24 check-ups</small>
-          </article>
-
-          <article class="stat-card">
-            <div class="stat-top">
-              <span class="stat-label">Vacinas</span>
-              <span class="trend neutral">9 hoje</span>
-            </div>
-            <strong>96%</strong>
-            <small>Vacinação em dia</small>
-          </article>
-
-          <article class="stat-card">
-            <div class="stat-top">
-              <span class="stat-label">Tratamentos</span>
-              <span class="trend up">+6</span>
-            </div>
-            <strong>24</strong>
-            <small>5 em observação</small>
-          </article>
-        </section>
-
-        <section class="content-grid">
-          <div class="panel panel-large">
-            <div class="panel-header">
-              <h3>Resumo da semana</h3>
-              <button class="chip-btn">Este mês</button>
-            </div>
-
-            <div class="chart-bars" aria-label="Resumo da semana">
-              <div class="bar-group">
-                <span class="bar" style="height: 43%"></span>
-                <label>Seg</label>
-              </div>
-              <div class="bar-group">
-                <span class="bar" style="height: 62%"></span>
-                <label>Ter</label>
-              </div>
-              <div class="bar-group">
-                <span class="bar" style="height: 54%"></span>
-                <label>Qua</label>
-              </div>
-              <div class="bar-group">
-                <span class="bar" style="height: 78%"></span>
-                <label>Qui</label>
-              </div>
-              <div class="bar-group">
-                <span class="bar" style="height: 68%"></span>
-                <label>Sex</label>
-              </div>
-              <div class="bar-group">
-                <span class="bar" style="height: 88%"></span>
-                <label>Sáb</label>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Próximas visitas</h3>
-              <a href="#">Ver tudo</a>
-            </div>
-
-            <div class="visit-list">
-              <div class="visit-item">
-                <div class="dot green"></div>
-                <div>
-                  <strong>Milo</strong>
-                  <small>15:30 · Revisão</small>
-                </div>
-              </div>
-              <div class="visit-item">
-                <div class="dot orange"></div>
-                <div>
-                  <strong>Luna</strong>
-                  <small>17:00 · Vacina</small>
-                </div>
-              </div>
-              <div class="visit-item">
-                <div class="dot purple"></div>
-                <div>
-                  <strong>Thor</strong>
-                  <small>18:15 · Exame</small>
+          <div class="desktop-content">
+            <div class="hero-banner">
+              <div class="hero-copy">
+                <h1>O cuidado que seu pet merece, perto de você.</h1>
+                <p>
+                  Conecte seu pet com profissionais de confiança para consultas,
+                  acompanhamento e tratamentos de forma simples.
+                </p>
+                <div class="hero-actions">
+                  <button>Agendar</button>
+                  <button class="ghost">Saiba mais</button>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
 
-        <section class="bottom-grid">
-          <div class="panel panel-list">
-            <div class="panel-header">
-              <h3>Pacientes</h3>
-              <button class="chip-btn secondary">Hoje</button>
+            <div class="section-header">
+              <span>Profissionais em destaque</span>
+              <button>Ver todos</button>
             </div>
 
-            <ul class="patient-list">
-              <li>
-                <div class="patient-meta">
-                  <div class="avatar small blue">M</div>
-                  <div>
-                    <strong>Milo</strong>
-                    <small>Shih Tzu</small>
+            <div class="doctor-grid">
+              <article class="doctor-card">
+                <div class="doctor-photo photo-one"></div>
+                <div class="doctor-body">
+                  <h3>Dr. Carlos Duarte</h3>
+                  <p>Veterinário · 8 anos</p>
+                  <div class="doctor-meta">
+                    <span>Especialista em pets</span>
+                    <button>Contato</button>
                   </div>
                 </div>
-                <span class="status ok">Saudável</span>
-              </li>
-              <li>
-                <div class="patient-meta">
-                  <div class="avatar small yellow">L</div>
-                  <div>
-                    <strong>Luna</strong>
-                    <small>Golden</small>
+              </article>
+
+              <article class="doctor-card">
+                <div class="doctor-photo photo-two"></div>
+                <div class="doctor-body">
+                  <h3>Dra. Laura Mendes</h3>
+                  <p>Cardiologia pet · 9 anos</p>
+                  <div class="doctor-meta">
+                    <span>Atendimento online</span>
+                    <button>Contato</button>
                   </div>
                 </div>
-                <span class="status warning">Recuperação</span>
-              </li>
-              <li>
-                <div class="patient-meta">
-                  <div class="avatar small pink">T</div>
-                  <div>
-                    <strong>Thor</strong>
-                    <small>Pastor Alemão</small>
+              </article>
+
+              <article class="doctor-card">
+                <div class="doctor-photo photo-three"></div>
+                <div class="doctor-body">
+                  <h3>Dra. Renata Costa</h3>
+                  <p>Dermatologia pet · 6 anos</p>
+                  <div class="doctor-meta">
+                    <span>Disponível agora</span>
+                    <button>Contato</button>
                   </div>
                 </div>
-                <span class="status alert">Atenção</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="panel panel-tasks">
-            <div class="panel-header">
-              <h3>Checklist</h3>
-              <button class="chip-btn">3 pendentes</button>
-            </div>
-
-            <div class="checklist">
-              <label class="check-item">
-                <input type="checkbox" checked />
-                <span>Revisar laudos de Milo</span>
-              </label>
-              <label class="check-item">
-                <input type="checkbox" checked />
-                <span>Confirmar vacina de Luna</span>
-              </label>
-              <label class="check-item">
-                <input type="checkbox" />
-                <span>Agendar retorno de Thor</span>
-              </label>
-              <label class="check-item">
-                <input type="checkbox" />
-                <span>Atualizar fichas de medicação</span>
-              </label>
+              </article>
             </div>
           </div>
         </section>
-      </main>
+
+        <aside class="mobile-panel panel">
+          <div class="phone-browser-header">
+            <div class="left-header">
+              <span class="mini-logo">M</span>
+              <span class="mini-label">MiauCare</span>
+            </div>
+            <button class="mini-btn">+</button>
+          </div>
+
+          <div class="feature-card main-feature">
+            <div class="feature-inner">
+              <h2>O cuidado que seu pet merece, perto de você.</h2>
+              <p>
+                Conte com atendimentos personalizados para cuidar da saúde do seu
+                companheiro.
+              </p>
+              <div class="tiny-actions">
+                <button>Agendar</button>
+                <button class="secondary">Saiba mais</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-card list-card">
+            <div class="list-header">
+              <span>Profissionais em destaque</span>
+              <button>Ver</button>
+            </div>
+            <div class="mini-doctor">
+              <div class="mini-avatar avatar-one"></div>
+              <div class="mini-info">
+                <strong>Raquel Souza</strong>
+                <small>Especialista em medicina</small>
+              </div>
+              <button>▶</button>
+            </div>
+            <div class="mini-doctor">
+              <div class="mini-avatar avatar-two"></div>
+              <div class="mini-info">
+                <strong>Rafael Lima</strong>
+                <small>Consultas e checkups</small>
+              </div>
+              <button>▶</button>
+            </div>
+          </div>
+
+          <div class="feature-card promo-card">
+            <div class="promo-top">
+              <span class="promo-tag">MiauCare</span>
+              <button>Saiba mais</button>
+            </div>
+            <h3>Seu pet, melhor cuidado.</h3>
+            <p>Agende consultas, vacinas e acompanhamento de rotina.</p>
+            <button class="promo-btn">Conhecer</button>
+          </div>
+        </aside>
+      </div>
     </div>
 
     <script src="script.js"></script>
