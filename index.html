@@ -3,155 +3,152 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MiauCare Prototype</title>
+    <meta name="description" content="Encontre cuidadores verificados para aves, cães, coelhos, gatos, peixes e roedores com a MiauCare." />
+    <title>MiauCare — Cuidadores verificados para todos os pets</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="canvas">
-      <div class="figma-topbar">
-        <div class="window-title-group">
-          <span class="arrow">‹</span>
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="MiauCare início">
+        <span class="brand-icon">m</span>
+        <span>MiauCare</span><span class="brand-divider"></span><span class="brand-subtitle">PetSitters</span>
+      </a>
+      <nav class="main-nav" aria-label="Navegação principal">
+        <a class="nav-current" href="#inicio">Início</a>
+        <a href="#vagas">Anuncie já!</a>
+        <a href="#curso">🎓 Curso</a>
+      </nav>
+      <a class="account-button" href="#conta">Criar conta / Entrar <span>↗</span></a>
+      <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    </header>
+
+    <main>
+      <section class="hero-section" id="inicio">
+        <div class="hero-content">
+          <span class="eyebrow"><span class="sparkle">✦</span> Cuidadores Verificados para Todos os Pets</span>
+          <h1>O cuidado que seu pet merece, <em>pertinho de você.</em></h1>
+          <p class="hero-description">Conectamos tutores de Aves, Cães, Coelhos, Gatos, Peixes &amp; Roedores a pet Sitters de confiança com perfis verificados.</p>
+
+          <form class="search-card" id="search-form">
+            <label class="location-input"><span aria-hidden="true">⌖</span><input id="location" type="search" placeholder="Digite seu bairro ou cidade..." aria-label="Digite seu bairro ou cidade" /></label>
+            <button type="submit" class="search-button"><span>⌕</span> Buscar</button>
+            <div class="species-picker">
+              <span class="species-label">Espécie:</span>
+              <button type="button" class="species-chip selected" data-species="Todas">Todas</button>
+              <button type="button" class="species-chip" data-species="Aves">Aves</button>
+              <button type="button" class="species-chip" data-species="Cães">Cães</button>
+              <button type="button" class="species-chip" data-species="Coelhos">Coelhos</button>
+              <button type="button" class="species-chip" data-species="Gatos">Gatos</button>
+              <button type="button" class="species-chip" data-species="Peixes">Peixes</button>
+              <button type="button" class="species-chip" data-species="Roedores">Roedores</button>
+            </div>
+          </form>
+          <div class="trust-note"><span class="trust-check">✓</span> Cuidadores verificados <span class="trust-separator">·</span> Pets felizes <span class="trust-separator">·</span> Tutores tranquilos</div>
         </div>
-        <div class="viewport-tabs">
-          <span class="tab active">Desktop · Principal · 1280 +</span>
-          <span class="tab">Mobile · 1 ...</span>
-          <span class="tab">Code component 1</span>
+        <div class="hero-art" aria-label="Ilustração de pets felizes">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="hero-sun"></div>
+          <div class="pet-emoji dog">🐶</div><div class="pet-emoji cat">🐱</div><div class="pet-emoji bird">🦜</div>
+          <div class="float-badge badge-rating"><span>★★★★★</span><strong>4.9/5</strong><small>avaliação média</small></div>
+          <div class="float-badge badge-verified"><span class="verified-check">✓</span><div><strong>Perfis verificados</strong><small>Cuidado de confiança</small></div></div>
+          <span class="decor decor-heart">♡</span><span class="decor decor-star">✦</span><span class="decor decor-paw">🐾</span>
         </div>
+      </section>
+
+      <section class="section featured-section" id="profissionais">
+        <div class="section-heading">
+          <div><span class="section-kicker">Perto de você</span><h2>Profissionais em Destaque</h2><p>Cuidadores avaliados com excelência por outros tutores</p></div>
+          <a class="text-link" href="#profissionais">Ver todos <span>→</span></a>
+        </div>
+        <div class="caregiver-grid">
+          <article class="caregiver-card" data-species="Cães Gatos">
+            <div class="caregiver-photo photo-camila"><span class="photo-tag">Mais contratado</span><span class="rating-pill">⭐ 4.9</span></div>
+            <div class="caregiver-details">
+              <div class="name-row"><div><h3>Camila Duarte</h3><span class="verified-label">✓ Verificado</span></div><span class="course-score">🎓 100%</span></div>
+              <p class="location-line">📍 Tabajaras, Uberlândia - MG</p>
+              <div class="tag-row"><span>Cães</span><span>Gatos</span><span class="service-tag">Hospedagem</span></div>
+              <p class="bio">Especialista em felinos e cães de pequeno porte com ambiente 100% telado.</p>
+              <div class="price-row"><div><small>Diária / Visita</small><strong>R$ 75</strong></div><div class="card-actions"><button class="outline-button">Ver Perfil</button><button class="solid-button">Contratar</button></div></div>
+            </div>
+          </article>
+
+          <article class="caregiver-card" data-species="Cães">
+            <div class="caregiver-photo photo-lucas"><span class="rating-pill">⭐ 4.8</span></div>
+            <div class="caregiver-details">
+              <div class="name-row"><div><h3>Lucas Mendonça</h3><span class="verified-label">✓ Verificado</span></div><span class="course-score">🎓 87%</span></div>
+              <p class="location-line">📍 Saraiva, Uberlândia - MG</p>
+              <div class="tag-row"><span>Cães</span><span class="service-tag">Passeio</span></div>
+              <p class="bio">Dog walker profissional com curso de adestramento positivo e primeiros socorros.</p>
+              <div class="price-row"><div><small>Diária / Visita</small><strong>R$ 50</strong></div><div class="card-actions"><button class="outline-button">Ver Perfil</button><button class="solid-button">Contratar</button></div></div>
+            </div>
+          </article>
+
+          <article class="caregiver-card" data-species="Aves Cães Coelhos Gatos Peixes Roedores">
+            <div class="caregiver-photo photo-beatriz"><span class="rating-pill">⭐ 5</span></div>
+            <div class="caregiver-details">
+              <div class="name-row"><div><h3>Beatriz Lima</h3><span class="verified-label">✓ Verificado</span></div></div>
+              <p class="location-line">📍 Centro, Uberlândia - MG</p>
+              <div class="tag-row"><span>Aves</span><span>Cães</span><span>Coelhos</span><span>Gatos</span><span>Peixes</span><span>Roedores</span><span class="service-tag">Visita</span></div>
+              <p class="bio">Veterinária especializada em aves ornamentais, coelhos, roedores, répteis e aquários.</p>
+              <div class="price-row"><div><small>Diária / Visita</small><strong>R$ 65</strong></div><div class="card-actions"><button class="outline-button">Ver Perfil</button><button class="solid-button">Contratar</button></div></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section jobs-section" id="vagas">
+        <div class="section-heading">
+          <div><span class="section-kicker">Oportunidades na sua região</span><h2>Vagas Abertas por Tutores</h2><p>Candidate-se para cuidar de pets na sua região</p></div>
+          <a class="text-link" href="#vagas">Ver mural de vagas <span>→</span></a>
+        </div>
+        <div class="jobs-grid">
+          <article class="job-card">
+            <div class="tutor-row"><div class="tutor-avatar avatar-patricia">PA</div><div><h3>Patrícia Alves</h3><p>Patrícia Alves <span>· Gatos</span></p></div><button class="more-button" aria-label="Mais opções">···</button></div>
+            <div class="job-pet"><span class="pet-icon">🐈</span><div><strong>Mia &amp; Loki</strong><small>SRD · 3 e 5 anos</small></div><span class="job-location">📍 Tabajaras</span></div>
+            <p class="job-description">Preciso de pet sitter para visitar meus 2 gatos por 4 dias durante viagem.</p>
+            <button class="apply-button">Tenho interesse <span>→</span></button>
+          </article>
+          <article class="job-card">
+            <div class="tutor-row"><div class="tutor-avatar avatar-henrique">HM</div><div><h3>Henrique Moraes</h3><p>Henrique Moraes <span>· Aves</span></p></div><button class="more-button" aria-label="Mais opções">···</button></div>
+            <div class="job-pet"><span class="pet-icon">🦜</span><div><strong>Piu</strong><small>Calopsita · 2 anos</small></div><span class="job-location">📍 Santa Mônica</span></div>
+            <p class="job-description">Busco cuidador com experiência em calopsitas para troca de água, ração e limpeza por 5 dias.</p>
+            <button class="apply-button">Tenho interesse <span>→</span></button>
+          </article>
+        </div>
+      </section>
+
+      <section class="course-section" id="curso">
+        <div class="course-content">
+          <span class="course-kicker">🎓 Novo — Formação Profissional MiauCare</span>
+          <h2>Curso PetSitter</h2>
+          <p class="course-description">Formação técnica completa em Bem-Estar, Nutrição, Comportamento, Biossegurança e Emergências para Aves, Cães, Coelhos, Gatos, Peixes e Roedores.</p>
+          <div class="course-facts"><span>40 horas</span><i></i><span>7 módulos</span><i></i><span>Certificado digital</span></div>
+          <ul class="course-benefits">
+            <li><span>✓</span>Apostila completa com 7 módulos técnicos avançados</li>
+            <li><span>✓</span>Avaliação final com 15 questões e gabarito comentado</li>
+            <li><span>✓</span>Certificado digital emitido pela plataforma MiauCare</li>
+            <li><span>✓</span>Perfil de PetSitter com nota de aprovação visível para tutores</li>
+          </ul>
+          <a class="course-cta" href="#conta">🎓 Iniciar a minha capacitação! <span>→</span></a>
+          <small class="course-note">Acesso exclusivo para usuários cadastrados</small>
+        </div>
+        <div class="course-art" aria-hidden="true"><div class="certificate-card"><span class="certificate-ribbon">MIAUCARE</span><div class="medal">🏅</div><strong>PetSitter<br />Certificado</strong><span>Formação profissional</span></div><span class="course-sparkle sparkle-a">✦</span><span class="course-sparkle sparkle-b">✧</span><span class="course-paw">🐾</span></div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="conta">
+      <div class="footer-main">
+        <div class="footer-about"><a class="brand footer-brand" href="#inicio"><span class="brand-icon">m</span><span>MiauCare</span></a><p>Vitrine digital de classificados e conexão direta entre tutores de Aves, Cães, Coelhos, Gatos, Peixes &amp; Roedores e cuidadores independentes.</p><div class="social-links"><a href="#" aria-label="Instagram">ig</a><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="TikTok">♪</a></div></div>
+        <div class="footer-column"><h3>Navegação</h3><a href="#profissionais">Buscar Pet Sitters</a><a href="#vagas">Anuncie já!</a><a href="#conta">Criar conta / Entrar</a><a href="#curso">Obter certificado MiauCare</a></div>
+        <div class="footer-column"><h3>Comunidade</h3><a href="#feedback">Feedback de Clientes</a><a href="#sobre">Sobre Nós</a><a href="#mapa">Mapa do Site</a><a href="#contato">Contate-nos</a></div>
+        <div class="footer-column"><h3>Legal &amp; Segurança</h3><a href="#termos">Termos e Condições de Uso</a><a href="#privacidade">Privacidade</a><a href="#seguranca">Segurança na plataforma</a></div>
       </div>
-
-      <div class="mockup-row">
-        <section class="desktop-panel panel">
-          <div class="browser-header">
-            <div class="browser-dots">
-              <span class="dot red"></span>
-              <span class="dot yellow"></span>
-              <span class="dot green"></span>
-            </div>
-            <div class="browser-address">miau.care</div>
-          </div>
-
-          <div class="desktop-content">
-            <div class="hero-banner">
-              <div class="hero-copy">
-                <h1>O cuidado que seu pet merece, perto de você.</h1>
-                <p>
-                  Conecte seu pet com profissionais de confiança para consultas,
-                  acompanhamento e tratamentos de forma simples.
-                </p>
-                <div class="hero-actions">
-                  <button>Agendar</button>
-                  <button class="ghost">Saiba mais</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="section-header">
-              <span>Profissionais em destaque</span>
-              <button>Ver todos</button>
-            </div>
-
-            <div class="doctor-grid">
-              <article class="doctor-card">
-                <div class="doctor-photo photo-one"></div>
-                <div class="doctor-body">
-                  <h3>Dr. Carlos Duarte</h3>
-                  <p>Veterinário · 8 anos</p>
-                  <div class="doctor-meta">
-                    <span>Especialista em pets</span>
-                    <button>Contato</button>
-                  </div>
-                </div>
-              </article>
-
-              <article class="doctor-card">
-                <div class="doctor-photo photo-two"></div>
-                <div class="doctor-body">
-                  <h3>Dra. Laura Mendes</h3>
-                  <p>Cardiologia pet · 9 anos</p>
-                  <div class="doctor-meta">
-                    <span>Atendimento online</span>
-                    <button>Contato</button>
-                  </div>
-                </div>
-              </article>
-
-              <article class="doctor-card">
-                <div class="doctor-photo photo-three"></div>
-                <div class="doctor-body">
-                  <h3>Dra. Renata Costa</h3>
-                  <p>Dermatologia pet · 6 anos</p>
-                  <div class="doctor-meta">
-                    <span>Disponível agora</span>
-                    <button>Contato</button>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <aside class="mobile-panel panel">
-          <div class="phone-browser-header">
-            <div class="left-header">
-              <span class="mini-logo">M</span>
-              <span class="mini-label">MiauCare</span>
-            </div>
-            <button class="mini-btn">+</button>
-          </div>
-
-          <div class="feature-card main-feature">
-            <div class="feature-inner">
-              <h2>O cuidado que seu pet merece, perto de você.</h2>
-              <p>
-                Conte com atendimentos personalizados para cuidar da saúde do seu
-                companheiro.
-              </p>
-              <div class="tiny-actions">
-                <button>Agendar</button>
-                <button class="secondary">Saiba mais</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="feature-card list-card">
-            <div class="list-header">
-              <span>Profissionais em destaque</span>
-              <button>Ver</button>
-            </div>
-            <div class="mini-doctor">
-              <div class="mini-avatar avatar-one"></div>
-              <div class="mini-info">
-                <strong>Raquel Souza</strong>
-                <small>Especialista em medicina</small>
-              </div>
-              <button>▶</button>
-            </div>
-            <div class="mini-doctor">
-              <div class="mini-avatar avatar-two"></div>
-              <div class="mini-info">
-                <strong>Rafael Lima</strong>
-                <small>Consultas e checkups</small>
-              </div>
-              <button>▶</button>
-            </div>
-          </div>
-
-          <div class="feature-card promo-card">
-            <div class="promo-top">
-              <span class="promo-tag">MiauCare</span>
-              <button>Saiba mais</button>
-            </div>
-            <h3>Seu pet, melhor cuidado.</h3>
-            <p>Agende consultas, vacinas e acompanhamento de rotina.</p>
-            <button class="promo-btn">Conhecer</button>
-          </div>
-        </aside>
-      </div>
-    </div>
-
+      <div class="footer-bottom"><span>© 2026 MiauCare — Todos os direitos reservados.</span><span>Feito com carinho para quem ama pets <b>♥</b></span></div>
+    </footer>
+    <div class="toast" role="status" aria-live="polite"></div>
     <script src="script.js"></script>
   </body>
 </html>
