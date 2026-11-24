@@ -1,147 +1,161 @@
-import type { NavPage, PetItem, UserProfile } from "../types/miaucare";
-import { CourseScrollBanner } from "../components/CourseScrollBanner";
-import { maskContact, sanitizeText } from "../utils/security";
+import React from "react";
+import { ActiveView, UserProfileData } from "../types/miaucare";
 
 interface LoggedHomeViewProps {
-  currentUser: UserProfile;
-  pets: PetItem[];
-  doneCount: number;
-  examPassed: boolean;
-  onNavigate: (page: NavPage) => void;
+  profile: UserProfileData;
+  petsCount: number;
+  completedModulesCount: number;
+  onNavigate: (view: ActiveView) => void;
   onLogout: () => void;
 }
 
-export function LoggedHomeView({
-  currentUser,
-  pets,
-  doneCount,
-  examPassed,
+export const LoggedHomeView: React.FC<LoggedHomeViewProps> = ({
+  profile,
+  petsCount,
+  completedModulesCount,
   onNavigate,
   onLogout,
-}: LoggedHomeViewProps) {
-  const safeName = sanitizeText(currentUser.name, 80);
-
+}) => {
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-20">
-      <section className="bg-gradient-to-br from-purple-900 to-indigo-900 rounded-3xl p-8 text-white space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-xs bg-white/15 px-3 py-1 rounded-full font-semibold">
-            Visão do Usuário Cadastrado · {safeName}
-          </span>
-          <button
-            type="button"
-            onClick={onLogout}
-            className="text-xs bg-white/10 hover:bg-white/20 text-purple-100 font-bold px-3 py-1 rounded-full transition"
-          >
-            Sair da conta
-          </button>
+    <div className="mx-auto max-w-6xl px-4 py-10">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="flex flex-col justify-between gap-4 border-b border-slate-100 pb-6 sm:flex-row sm:items-center">
+          <div>
+            <span className="inline-block rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-900">
+              Perfil: {profile.role}
+            </span>
+            <h1 className="mt-3 text-2xl font-extrabold text-slate-900 sm:text-3xl">
+              Olá, {profile.name}
+            </h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Gerencie seus anúncios, rotinas de pets, mensagens e formação no
+              MiauCare.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onNavigate("workspace")}
+              className="rounded-lg border border-purple-900 bg-purple-800 px-4 py-2 text-sm font-bold text-white hover:bg-purple-900"
+            >
+              Anunciar
+            </button>
+            <button
+              type="button"
+              onClick={onLogout}
+              className="rounded-lg border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-200"
+            >
+              Sair
+            </button>
+          </div>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight">
-          Central de Atendimentos e Cuidados MiauCare
-        </h1>
-        <p className="text-sm text-purple-200 max-w-2xl">
-          Acesse seus atendimentos, cadastre pets, acompanhe mensagens moderadas, avance no curso e gerencie sua privacidade.
-        </p>
+        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">
+                Anunciar e Atendimentos
+              </h2>
+              <p className="mt-1.5 text-sm text-slate-600">
+                Cadastre novos anúncios de cuidado domiciliar, confira
+                checklists por espécie e registre observações.
+              </p>
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button
+                type="button"
+                onClick={() => onNavigate("workspace")}
+                className="rounded-lg border border-purple-900 bg-purple-800 px-3.5 py-2 text-sm font-semibold text-white hover:bg-purple-900"
+              >
+                Abrir Área de Anúncios
+              </button>
+            </div>
+          </article>
 
-        <div className="flex flex-wrap gap-2.5 pt-1">
-          <button
-            type="button"
-            onClick={() => onNavigate("workspace")}
-            className="bg-white hover:bg-purple-50 text-purple-900 font-extrabold text-xs px-4 py-2.5 rounded-xl transition"
-          >
-            Meus Atendimentos
-          </button>
-          <button
-            type="button"
-            onClick={() => onNavigate("pets")}
-            className="bg-white/15 hover:bg-white/25 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition"
-          >
-            Meus Pets ({pets.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => onNavigate("chat")}
-            className="bg-white/15 hover:bg-white/25 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition"
-          >
-            Mensagens
-          </button>
-          <button
-            type="button"
-            onClick={() => onNavigate("course")}
-            className="bg-white/15 hover:bg-white/25 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition"
-          >
-            Curso ({doneCount}/7)
-          </button>
-          <button
-            type="button"
-            onClick={() => onNavigate("profile")}
-            className="bg-white/15 hover:bg-white/25 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition"
-          >
-            Perfil e LGPD
-          </button>
+          <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">
+                Meus Pets ({petsCount})
+              </h2>
+              <p className="mt-1.5 text-sm text-slate-600">
+                Cadastre animais de estimação, defina rotinas de alimentação e
+                higiene e grave observações do dia a dia.
+              </p>
+            </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => onNavigate("my-pets")}
+                className="rounded-lg border border-purple-900 bg-purple-800 px-3.5 py-2 text-sm font-semibold text-white hover:bg-purple-900"
+              >
+                Gerenciar Pets
+              </button>
+            </div>
+          </article>
+
+          <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">
+                Chat Moderado
+              </h2>
+              <p className="mt-1.5 text-sm text-slate-600">
+                Converse com tutores ou cuidadores com filtro preventivo e
+                organização de combinados.
+              </p>
+            </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => onNavigate("chat")}
+                className="rounded-lg border border-purple-900 bg-purple-800 px-3.5 py-2 text-sm font-semibold text-white hover:bg-purple-900"
+              >
+                Abrir Chat
+              </button>
+            </div>
+          </article>
+
+          <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">
+                Curso MiauCare ({completedModulesCount}/7)
+              </h2>
+              <p className="mt-1.5 text-sm text-slate-600">
+                Estude o conteúdo programático completo por espécie, segurança,
+                primeiros socorros e ética.
+              </p>
+            </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => onNavigate("course")}
+                className="rounded-lg border border-purple-900 bg-purple-800 px-3.5 py-2 text-sm font-semibold text-white hover:bg-purple-900"
+              >
+                Acessar Curso
+              </button>
+            </div>
+          </article>
+
+          <article className="flex flex-col justify-between rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Perfil</h2>
+              <p className="mt-1.5 text-sm text-slate-600">
+                Atualize seus dados cadastrais, escolha seu papel (Pet Sitter,
+                Tutor ou ambos) ou gerencie sua conta.
+              </p>
+            </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => onNavigate("profile")}
+                className="rounded-lg border border-purple-900 bg-purple-800 px-3.5 py-2 text-sm font-semibold text-white hover:bg-purple-900"
+              >
+                Editar Perfil
+              </button>
+            </div>
+          </article>
         </div>
       </section>
-
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-1.5">
-          <p className="font-bold text-slate-900">Checklist e Ficha Diária</p>
-          <p className="text-xs text-slate-500">
-            Execute tarefas por espécie, registre horários e imprima a ficha de acompanhamento.
-          </p>
-          <button
-            type="button"
-            onClick={() => onNavigate("workspace")}
-            className="text-xs font-bold text-purple-700 pt-1"
-          >
-            Abrir Atendimentos →
-          </button>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-1.5">
-          <p className="font-bold text-slate-900">Pets Cadastrados</p>
-          <p className="text-xs text-slate-500">
-            {pets.length} pet(s) registrado(s) com instruções de rotina e cuidados especiais.
-          </p>
-          <button
-            type="button"
-            onClick={() => onNavigate("pets")}
-            className="text-xs font-bold text-purple-700 pt-1"
-          >
-            Gerenciar Pets →
-          </button>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-1.5">
-          <p className="font-bold text-slate-900">Proteção de Contato</p>
-          <p className="text-xs text-slate-500">
-            Contato: {maskContact(currentUser.phone || currentUser.email)}
-          </p>
-          <button
-            type="button"
-            onClick={() => onNavigate("profile")}
-            className="text-xs font-bold text-purple-700 pt-1"
-          >
-            Configurar Perfil →
-          </button>
-        </div>
-      </section>
-
-      <CourseScrollBanner
-        variant="inline"
-        doneCount={doneCount}
-        examPassed={examPassed}
-        isAuthenticated={true}
-        onOpenCourse={() => onNavigate("course")}
-      />
-
-      <CourseScrollBanner
-        variant="floating"
-        doneCount={doneCount}
-        examPassed={examPassed}
-        isAuthenticated={true}
-        onOpenCourse={() => onNavigate("course")}
-      />
     </div>
   );
-}
+};

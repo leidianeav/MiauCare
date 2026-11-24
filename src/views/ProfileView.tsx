@@ -1,153 +1,245 @@
-import { useState, useRef, type FormEvent, type ChangeEvent } from "react";
-import type { UserProfile } from "../types/miaucare";
-import { moderateImageFile } from "../utils/moderation";
-import { isSafeMediaUrl, isValidEmail, sanitizeText } from "../utils/security";
+import React, { useState } from "react";
+import { UserProfileData, UserRoleOption } from "../types/miaucare";
 
 interface ProfileViewProps {
-  currentUser: UserProfile;
-  onSave: (upd: Partial<UserProfile>) => void;
-  onBack: () => void;
-  onToast: (msg: string) => void;
+  profile: UserProfileData;
+  onSaveProfile: (updated: UserProfileData) => void;
+  onDeleteAccount: () => void;
+  onReturn: () => void;
 }
 
-export function ProfileView({ currentUser, onSave, onBack, onToast }: ProfileViewProps) {
-  const [name, setName] = useState(currentUser.name);
-  const [email, setEmail] = useState(currentUser.email);
-  const [phone, setPhone] = useState(currentUser.phone ?? "");
-  const [age, setAge] = useState(currentUser.age ? String(currentUser.age) : "32");
-  const [hideContactUntilBooking, setHideContactUntilBooking] = useState(
-    currentUser.hideContactUntilBooking ?? true
-  );
-  const [profileImg, setProfileImg] = useState(currentUser.profileImg);
-  const photoRef = useRef<HTMLInputElement | null>(null);
+const ROLE_OPTIONS: UserRoleOption[] = [
+  "Pet Sitter",
+  "Tutor",
+  "Pet Sitter e Tutor",
+];
 
-  const handlePhoto = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const mod = moderateImageFile(file);
-    if (!mod.ok) {
-      onToast(mod.reason || "Arquivo bloqueado.");
-      e.target.value = "";
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const val = String(reader.result || "");
-      if (isSafeMediaUrl(val)) {
-        setProfileImg(val);
-        onToast("Foto atualizada.");
-      }
-    };
-    reader.readAsDataURL(file);
-    e.target.value = "";
+export const ProfileView: React.FC<ProfileViewProps> = ({
+  profile,
+  onSaveProfile,
+  onDeleteAccount,
+  onReturn,
+}) => {
+  const [formData, setFormData] = useState<UserProfileData>(profile);
+  const [savedNotice, setSavedNotice] = useState(false);
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    onSaveProfile(formData);
+    setSavedNotice(true);
   };
 
-  const save = (e: FormEvent) => {
-    e.preventDefault();
-    const cleanName = sanitizeText(name, 80);
-    const cleanEmail = sanitizeText(email, 100).toLowerCase();
-    if (cleanName.split(/\s+/).length < 2) {
-      onToast("Informe nome e sobrenome.");
-      return;
+  const handleConfirmDeleteAccount = () => {
+    const confirmed = window.confirm(
+      "Tem certeza de que deseja excluir sua conta e apagar seus dados locais no MiauCare? Esta ação não pode ser desfeita."
+    );
+    if (confirmed) {
+      onDeleteAccount();
     }
-    if (!isValidEmail(cleanEmail)) {
-      onToast("Informe um e-mail válido.");
-      return;
-    }
-    const parsedAge = Math.min(100, Math.max(18, parseInt(age, 10) || 32));
-    onSave({
-      name: cleanName,
-      email: cleanEmail,
-      phone: sanitizeText(phone, 30),
-      age: parsedAge,
-      hideContactUntilBooking,
-      profileImg: isSafeMediaUrl(profileImg) ? profileImg : "",
-    });
-    onToast("Perfil e preferências de privacidade salvos.");
   };
 
   return (
-    <form onSubmit={save} className="max-w-2xl mx-auto bg-white rounded-3xl border border-slate-200 p-6 space-y-5">
-      <div className="flex items-center gap-3">
-        <button type="button" onClick={onBack} className="text-xs font-bold text-purple-700">
-          ← Voltar
-        </button>
-        <h2 className="text-xl font-extrabold">Configurações do Perfil e Privacidade</h2>
-      </div>
+    <div className="mx-auto max-w-4xl px-4 py-10">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <h1 className="text-2xl font-extrabold text-slate-900">Perfil</h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Gerencie suas informações de conta e defina como você atua na
+              plataforma.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onReturn}
+            className="rounded-lg border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-200"
+          >
+            Retornar
+          </button>
+        </div>
 
-      <div className="flex items-center gap-4">
-        <div className="w-20 h-20 rounded-2xl bg-purple-700 text-white flex items-center justify-center font-extrabold text-xl overflow-hidden">
-          {profileImg && isSafeMediaUrl(profileImg) ? (
-            <img src={profileImg} alt={name} className="w-full h-full object-cover" />
-          ) : (
-            sanitizeText(name, 2).toUpperCase()
+        <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                htmlFor="profile-name"
+                className="mb-1 block text-sm font-semibold text-slate-800"
+              >
+                Nome completo
+              </label>
+              <input
+                id="profile-name"
+                type="text"
+                value={formData.name}
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                  setSavedNotice(false);
+                }}
+                required
+                className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="profile-role"
+                className="mb-1 block text-sm font-semibold text-slate-800"
+              >
+                Atuação na plataforma
+              </label>
+              <select
+                id="profile-role"
+                value={formData.role}
+                onChange={(e) => {
+                  setFormData({
+                    ...formData,
+                    role: e.target.value as UserRoleOption,
+                  });
+                  setSavedNotice(false);
+                }}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+              >
+                {ROLE_OPTIONS.map((roleOpt) => (
+                  <option key={roleOpt} value={roleOpt}>
+                    {roleOpt}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="profile-email"
+                className="mb-1 block text-sm font-semibold text-slate-800"
+              >
+                E-mail
+              </label>
+              <input
+                id="profile-email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => {
+                  setFormData({ ...formData, email: e.target.value });
+                  setSavedNotice(false);
+                }}
+                required
+                className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="profile-phone"
+                className="mb-1 block text-sm font-semibold text-slate-800"
+              >
+                Telefone / WhatsApp
+              </label>
+              <input
+                id="profile-phone"
+                type="text"
+                value={formData.phone}
+                onChange={(e) => {
+                  setFormData({ ...formData, phone: e.target.value });
+                  setSavedNotice(false);
+                }}
+                className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="profile-age"
+                className="mb-1 block text-sm font-semibold text-slate-800"
+              >
+                Idade
+              </label>
+              <input
+                id="profile-age"
+                type="text"
+                value={formData.age}
+                onChange={(e) => {
+                  setFormData({ ...formData, age: e.target.value });
+                  setSavedNotice(false);
+                }}
+                className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="profile-city"
+                className="mb-1 block text-sm font-semibold text-slate-800"
+              >
+                Cidade / Estado
+              </label>
+              <input
+                id="profile-city"
+                type="text"
+                value={formData.city}
+                onChange={(e) => {
+                  setFormData({ ...formData, city: e.target.value });
+                  setSavedNotice(false);
+                }}
+                className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="profile-bio"
+              className="mb-1 block text-sm font-semibold text-slate-800"
+            >
+              Apresentação e experiência
+            </label>
+            <textarea
+              id="profile-bio"
+              rows={3}
+              value={formData.bio}
+              onChange={(e) => {
+                setFormData({ ...formData, bio: e.target.value });
+                setSavedNotice(false);
+              }}
+              className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+            />
+          </div>
+
+          {savedNotice && (
+            <div
+              role="status"
+              className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-900"
+            >
+              Alterações do perfil salvas com sucesso.
+            </div>
           )}
-        </div>
-        <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
-        <button
-          type="button"
-          onClick={() => photoRef.current?.click()}
-          className="bg-purple-50 text-purple-700 font-bold text-xs px-4 py-2.5 rounded-xl"
-        >
-          Trocar foto
-        </button>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
+            <button
+              type="button"
+              onClick={handleConfirmDeleteAccount}
+              className="rounded-lg border border-red-700 bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700"
+            >
+              Deletar Conta
+            </button>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onReturn}
+                className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100"
+              >
+                Retornar
+              </button>
+              <button
+                type="submit"
+                className="rounded-lg border border-purple-900 bg-purple-800 px-5 py-2 text-sm font-bold text-white hover:bg-purple-900"
+              >
+                Confirmar Alterações
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">Nome completo</label>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs"
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">E-mail</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs"
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">Telefone</label>
-          <input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="(34) 99999-9999"
-            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs"
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">Idade</label>
-          <input
-            type="number"
-            min={18}
-            max={100}
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs"
-          />
-        </div>
-      </div>
-
-      <label className="flex items-start gap-2.5 bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-xs text-slate-700 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={hideContactUntilBooking}
-          onChange={(e) => setHideContactUntilBooking(e.target.checked)}
-          className="mt-0.5 accent-purple-700"
-        />
-        <span>
-          <strong>Proteção de dados (LGPD):</strong> manter contato direto mascarado até confirmação do atendimento.
-        </span>
-      </label>
-
-      <button type="submit" className="bg-purple-700 text-white font-bold px-6 py-3 rounded-xl text-xs">
-        Salvar Alterações
-      </button>
-    </form>
+    </div>
   );
-}
+};

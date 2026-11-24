@@ -1,175 +1,160 @@
-import { useState, useRef, useEffect } from "react";
-import { containsSwear } from "../utils/moderation";
-import { sanitizeText } from "../utils/security";
+import React, { useState } from "react";
+import { ChatMessage } from "../types/miaucare";
 
 interface ChatViewProps {
-  onBack: () => void;
-  onToast: (msg: string) => void;
+  messages: ChatMessage[];
+  senderName: string;
+  onSendMessage: (message: ChatMessage) => void;
+  onReturn: () => void;
 }
 
-interface ThreadMessage {
-  id: number;
-  from: "me" | "other";
-  text: string;
-  time: string;
-  hidden: boolean;
-}
-
-interface ChatThread {
-  id: number;
-  withName: string;
-  subject: string;
-  tag: "atendimento" | "vaga";
-  unread: number;
-  messages: ThreadMessage[];
-}
-
-const INITIAL_THREADS: readonly ChatThread[] = [
-  {
-    id: 1,
-    withName: "Camila Duarte",
-    subject: "Hospedagem · Mia & Loki",
-    tag: "atendimento",
-    unread: 1,
-    messages: [{ id: 1, from: "other", text: "Olá! Tudo certo com a hospedagem?", time: "14:30", hidden: false }],
-  },
-  {
-    id: 2,
-    withName: "Beatriz Lima",
-    subject: "Vaga · Piu (Calopsita)",
-    tag: "vaga",
-    unread: 0,
-    messages: [{ id: 1, from: "other", text: "Tenho experiência com calopsitas.", time: "09:05", hidden: false }],
-  },
+const SENSITIVE_PATTERNS = [
+  /cpf/i,
+  /rg/i,
+  /senha/i,
+  /pix/i,
+  /cart[aã]o\s+de\s+cr[eé]dito/i,
+  /chave\s+de\s+casa/i,
 ];
 
-let _msgSeq = 200;
-const nextMsgId = () => ++_msgSeq;
-const nowTime = () =>
-  new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+export const ChatView: React.FC<ChatViewProps> = ({
+  messages,
+  senderName,
+  onSendMessage,
+  onReturn,
+}) => {
+  const [draft, setDraft] = useState("");
+  const [warning, setWarning] = useState<string | null>(null);
 
-export function ChatView({ onBack, onToast }: ChatViewProps) {
-  const [threads, setThreads] = useState<ChatThread[]>([...INITIAL_THREADS]);
-  const [activeId, setActiveId] = useState<number>(1);
-  const [mobileThread, setMobileThread] = useState<boolean>(false);
-  const [input, setInput] = useState<string>("");
-  const endRef = useRef<HTMLDivElement | null>(null);
-
-  const active = threads.find((t) => t.id === activeId) ?? threads[0];
-
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [active?.messages?.length]);
-
-  const send = () => {
-    const trimmed = sanitizeText(input, 500);
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const trimmed = draft.trim();
     if (!trimmed) return;
-    const hidden = containsSwear(trimmed);
-    if (hidden) onToast("Mensagem bloqueada pelo filtro de conduta.");
-    setThreads((prev) =>
-      prev.map((t) =>
-        t.id === active.id
-          ? {
-              ...t,
-              unread: 0,
-              messages: [
-                ...t.messages,
-                { id: nextMsgId(), from: "me", text: trimmed, time: nowTime(), hidden },
-              ],
-            }
-          : t
-      )
-    );
-    setInput("");
+
+    const hasSensitiveTerm = SENSITIVE_PATTERNS.some((rx) => rx.test(trimmed));
+    if (hasSensitiveTerm) {
+      setWarning(
+        "Atenção: evite enviar senhas, documentos ou chaves de acesso no chat. Confirme os combinados com segurança."
+      );
+    } else {
+      setWarning(null);
+    }
+
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    onSendMessage({
+      id: `msg-${Date.now()}`,
+      sender: senderName || "Usuário MiauCare",
+      text: trimmed,
+      timestamp,
+      flagged: hasSensitiveTerm,
+    });
+
+    setDraft("");
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+    <div className="mx-auto max-w-4xl px-4 py-10">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <h1 className="text-2xl font-extrabold text-slate-900">
+              Chat Moderado
+            </h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Combine horários, rotina do pet e registros de visita com
+              segurança.
+            </p>
+          </div>
           <button
             type="button"
-            onClick={() => (mobileThread ? setMobileThread(false) : onBack())}
-            className="text-xs font-bold text-purple-700"
+            onClick={onReturn}
+            className="rounded-lg border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-200"
           >
-            ← {mobileThread ? "Conversas" : "Voltar"}
+            Retornar
           </button>
-          <h2 className="text-xl font-extrabold">Mensagens</h2>
         </div>
-        <span className="text-[11px] text-slate-500">Moderação ativa · Sem envio de áudio</span>
-      </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden flex h-[65vh]">
+        <div className="mt-4 rounded-xl border border-purple-200 bg-purple-50 px-4 py-3 text-xs font-medium text-purple-950">
+          Moderação ativa: combine primeiro os detalhes da rotina pelo chat e
+          proteja dados pessoais sensíveis.
+        </div>
+
         <div
-          className={`${
-            mobileThread ? "hidden md:flex" : "flex"
-          } w-full md:w-64 border-r border-slate-100 flex-col shrink-0`}
+          aria-live="polite"
+          className="mt-5 max-h-96 space-y-3 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-4"
         >
-          {threads.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => {
-                setActiveId(t.id);
-                setMobileThread(true);
-              }}
-              className={`w-full text-left px-4 py-3 border-b border-slate-50 ${
-                active.id === t.id ? "bg-purple-50" : "hover:bg-slate-50"
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`rounded-xl border p-3.5 text-sm ${
+                msg.flagged
+                  ? "border-amber-300 bg-amber-50 text-slate-900"
+                  : "border-slate-200 bg-white text-slate-900"
               }`}
             >
-              <p className="text-xs font-bold text-slate-900">{t.withName}</p>
-              <p className="text-[11px] text-slate-500 truncate">{t.subject}</p>
-            </button>
+              <div className="flex items-center justify-between gap-2 text-xs text-slate-500">
+                <span className="font-bold text-slate-800">{msg.sender}</span>
+                <span>{msg.timestamp}</span>
+              </div>
+              <p className="mt-1.5 leading-relaxed">{msg.text}</p>
+              {msg.flagged && (
+                <p className="mt-1.5 text-xs font-semibold text-amber-800">
+                  Mensagem sinalizada pelo filtro preventivo de dados sensíveis.
+                </p>
+              )}
+            </div>
           ))}
         </div>
 
-        <div className={`${!mobileThread ? "hidden md:flex" : "flex"} flex-1 flex-col min-w-0`}>
-          <div className="px-4 py-3 border-b border-slate-100">
-            <p className="text-sm font-bold text-slate-900">{active.withName}</p>
-            <p className="text-[11px] text-slate-500">{active.subject}</p>
+        {warning && (
+          <div
+            role="alert"
+            className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2.5 text-sm font-medium text-amber-950"
+          >
+            {warning}
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
-            {active.messages.map((m) => (
-              <div key={m.id} className={`flex ${m.from === "me" ? "justify-end" : "justify-start"}`}>
-                {m.hidden ? (
-                  <div className="bg-amber-50 border border-amber-300 text-amber-800 text-xs px-3 py-2 rounded-xl italic">
-                    Mensagem ocultada pelo filtro de conduta
-                  </div>
-                ) : (
-                  <div
-                    className={`max-w-xs px-4 py-2 rounded-2xl text-xs ${
-                      m.from === "me" ? "bg-purple-700 text-white" : "bg-slate-100 text-slate-800"
-                    }`}
-                  >
-                    <p>{m.text}</p>
-                    <p className={`text-[10px] mt-1 ${m.from === "me" ? "text-purple-200" : "text-slate-400"}`}>
-                      {m.time}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
-            <div ref={endRef} />
-          </div>
-          <div className="p-3 border-t border-slate-100 flex gap-2">
+        )}
+
+        <form onSubmit={handleSubmit} className="mt-5 space-y-3">
+          <div>
+            <label
+              htmlFor="chat-input"
+              className="mb-1 block text-sm font-semibold text-slate-800"
+            >
+              Escrever mensagem
+            </label>
             <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && send()}
-              placeholder="Digite sua mensagem..."
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs"
+              id="chat-input"
+              type="text"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder="Digite sua mensagem sobre rotina, horários ou cuidados..."
+              className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
             />
+          </div>
+
+          <div className="flex justify-end gap-2">
             <button
               type="button"
-              onClick={send}
-              disabled={!input.trim()}
-              className="bg-purple-700 disabled:opacity-40 text-white font-bold px-4 py-2 rounded-xl text-xs"
+              onClick={onReturn}
+              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100"
             >
-              Enviar
+              Retornar
+            </button>
+            <button
+              type="submit"
+              className="rounded-lg border border-purple-900 bg-purple-800 px-5 py-2 text-sm font-bold text-white hover:bg-purple-900"
+            >
+              Confirmar Envio
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
-}
+};

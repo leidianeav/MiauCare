@@ -1,203 +1,235 @@
-import { useState, type FormEvent, type ChangeEvent } from "react";
-import type { PetCategoryPlural, PetItem } from "../types/miaucare";
-import { moderateImageFile } from "../utils/moderation";
-import { isSafeMediaUrl, sanitizeText } from "../utils/security";
-import { SPECIES_ICONS } from "../utils/species";
+import React, { useState } from "react";
+import { PetProfile, SpeciesType } from "../types/miaucare";
 
 interface MyPetsViewProps {
-  pets: PetItem[];
-  onAdd: (pet: Omit<PetItem, "id">) => void;
-  onDelete: (id: number) => void;
-  onBack: () => void;
-  onToast: (msg: string) => void;
+  pets: PetProfile[];
+  onAddPet: (pet: PetProfile) => void;
+  onAddPetObservation: (petId: string, text: string) => void;
+  onReturn: () => void;
 }
 
-const PET_SPECIES: readonly PetCategoryPlural[] = [
-  "Aves",
-  "Cães",
-  "Coelhos",
-  "Gatos",
-  "Peixes",
-  "Roedores",
+const SPECIES_OPTIONS: SpeciesType[] = [
+  "Gato",
+  "Cão",
+  "Ave",
+  "Coelho",
+  "Roedor",
+  "Peixe",
 ];
 
-export function MyPetsView({ pets, onAdd, onDelete, onBack, onToast }: MyPetsViewProps) {
-  const [showForm, setShowForm] = useState(false);
+export const MyPetsView: React.FC<MyPetsViewProps> = ({
+  pets,
+  onAddPet,
+  onAddPetObservation,
+  onReturn,
+}) => {
   const [name, setName] = useState("");
-  const [species, setSpecies] = useState<PetCategoryPlural>("Gatos");
-  const [breed, setBreed] = useState("");
-  const [age, setAge] = useState("");
-  const [care, setCare] = useState("");
-  const [photo, setPhoto] = useState("");
+  const [species, setSpecies] = useState<SpeciesType>("Gato");
+  const [ageOrNotes, setAgeOrNotes] = useState("");
+  const [obsInputs, setObsInputs] = useState<Record<string, string>>({});
 
-  const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const mod = moderateImageFile(file);
-    if (!mod.ok) {
-      onToast(mod.reason || "Arquivo bloqueado.");
-      e.target.value = "";
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const val = String(reader.result || "");
-      if (isSafeMediaUrl(val)) setPhoto(val);
+  const handleSubmitPet = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!name.trim()) return;
+
+    const newPet: PetProfile = {
+      id: `pet-${Date.now()}`,
+      name: name.trim(),
+      species,
+      ageOrNotes:
+        ageOrNotes.trim() || "Rotina domiciliar cadastrada pelo tutor",
+      observations: [],
     };
-    reader.readAsDataURL(file);
-    e.target.value = "";
+
+    onAddPet(newPet);
+    setName("");
+    setAgeOrNotes("");
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const cleanName = sanitizeText(name, 60);
-    if (!cleanName) return;
-    onAdd({
-      name: cleanName,
-      species,
-      breed: sanitizeText(breed, 60),
-      age: sanitizeText(age, 30),
-      specialCare: sanitizeText(care, 300),
-      photo: isSafeMediaUrl(photo) ? photo : undefined,
-    });
-    onToast(`Pet "${cleanName}" cadastrado.`);
-    setName("");
-    setBreed("");
-    setAge("");
-    setCare("");
-    setPhoto("");
-    setShowForm(false);
+  const handleSavePetObs = (petId: string) => {
+    const text = (obsInputs[petId] || "").trim();
+    if (!text) return;
+    onAddPetObservation(petId, text);
+    setObsInputs((prev) => ({ ...prev, [petId]: "" }));
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <button type="button" onClick={onBack} className="text-xs font-bold text-purple-700">
-            ← Voltar
-          </button>
-          <h2 className="text-xl font-extrabold">Meus Pets</h2>
+    <div className="mx-auto max-w-6xl px-4 py-10">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900">Meus Pets</h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Cadastre seus animais, registre cuidados de rotina e grave
+            observações importantes.
+          </p>
         </div>
-        {!showForm && (
-          <button
-            type="button"
-            onClick={() => setShowForm(true)}
-            className="bg-purple-700 text-white font-bold px-4 py-2 rounded-xl text-xs"
-          >
-            + Cadastrar Pet
-          </button>
-        )}
+
+        <button
+          type="button"
+          onClick={onReturn}
+          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100"
+        >
+          Retornar
+        </button>
       </div>
 
-      {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4">
-          <h3 className="font-extrabold text-slate-900">Novo Pet</h3>
-          <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200 shrink-0">
-              {photo && isSafeMediaUrl(photo) ? (
-                <img src={photo} alt="Pré-visualização do pet" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-3xl" aria-hidden="true">
-                  {SPECIES_ICONS[species] ?? "🐾"}
-                </span>
-              )}
-            </div>
-            <label className="cursor-pointer bg-purple-50 text-purple-700 font-bold text-xs px-4 py-2.5 rounded-xl">
-              Escolher foto
-              <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
-            </label>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nome do Pet *"
-              className="border border-slate-200 rounded-xl px-3 py-2 text-xs"
-            />
-            <select
-              value={species}
-              onChange={(e) => setSpecies(e.target.value as PetCategoryPlural)}
-              className="border border-slate-200 rounded-xl px-3 py-2 text-xs"
-            >
-              {PET_SPECIES.map((s) => (
-                <option key={s}>{s}</option>
-              ))}
-            </select>
-            <input
-              value={breed}
-              onChange={(e) => setBreed(e.target.value)}
-              placeholder="Raça"
-              className="border border-slate-200 rounded-xl px-3 py-2 text-xs"
-            />
-            <input
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              placeholder="Idade (ex: 2 anos)"
-              className="border border-slate-200 rounded-xl px-3 py-2 text-xs"
-            />
-          </div>
-          <textarea
-            rows={2}
-            value={care}
-            onChange={(e) => setCare(e.target.value)}
-            placeholder="Cuidados especiais..."
-            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs"
-          />
-          <div className="flex gap-2">
-            <button type="submit" className="bg-purple-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs">
-              Salvar Pet
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowForm(false)}
-              className="bg-slate-100 text-slate-700 font-bold px-4 py-2.5 rounded-xl text-xs"
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
-      )}
+      <div className="grid gap-8 lg:grid-cols-12">
+        <section className="lg:col-span-5">
+          <form
+            onSubmit={handleSubmitPet}
+            className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4"
+          >
+            <h2 className="text-lg font-bold text-slate-900">Cadastrar Pet</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {pets.map((pet) => (
-          <div key={pet.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col">
-            <div className="h-36 bg-slate-100 flex items-center justify-center overflow-hidden">
-              {pet.photo && isSafeMediaUrl(pet.photo) ? (
-                <img src={pet.photo} alt={pet.name} className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-5xl" aria-hidden="true">
-                  {SPECIES_ICONS[pet.species] ?? "🐾"}
-                </span>
-              )}
+            <div>
+              <label
+                htmlFor="pet-name"
+                className="mb-1 block text-sm font-semibold text-slate-800"
+              >
+                Nome do pet
+              </label>
+              <input
+                id="pet-name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ex.: Thor"
+                required
+                className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+              />
             </div>
-            <div className="p-4 space-y-1.5 flex-1 flex flex-col">
-              <div className="flex items-center justify-between">
-                <h4 className="font-bold text-slate-900">{sanitizeText(pet.name, 60)}</h4>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onDelete(pet.id);
-                    onToast(`Pet "${pet.name}" removido.`);
-                  }}
-                  className="text-xs text-red-500 font-bold"
-                >
-                  Remover
-                </button>
-              </div>
-              <p className="text-xs text-slate-500">
-                {pet.species} {pet.breed ? `· ${sanitizeText(pet.breed, 50)}` : ""}{" "}
-                {pet.age ? `· ${sanitizeText(pet.age, 30)}` : ""}
-              </p>
-              {pet.specialCare && (
-                <div className="mt-auto pt-2 bg-amber-50 border border-amber-100 rounded-xl p-2 text-[11px] text-amber-800">
-                  <strong>Cuidados:</strong> {sanitizeText(pet.specialCare, 300)}
+
+            <div>
+              <label
+                htmlFor="pet-species"
+                className="mb-1 block text-sm font-semibold text-slate-800"
+              >
+                Espécie
+              </label>
+              <select
+                id="pet-species"
+                value={species}
+                onChange={(e) => setSpecies(e.target.value as SpeciesType)}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+              >
+                {SPECIES_OPTIONS.map((sp) => (
+                  <option key={sp} value={sp}>
+                    {sp}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="pet-notes"
+                className="mb-1 block text-sm font-semibold text-slate-800"
+              >
+                Idade e cuidados habituais
+              </label>
+              <textarea
+                id="pet-notes"
+                rows={3}
+                value={ageOrNotes}
+                onChange={(e) => setAgeOrNotes(e.target.value)}
+                placeholder="Ex.: 3 anos · Alimentação às 8h e 19h, sem restrições"
+                className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={onReturn}
+                className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100"
+              >
+                Retornar
+              </button>
+              <button
+                type="submit"
+                className="rounded-lg border border-purple-900 bg-purple-800 px-5 py-2 text-sm font-bold text-white hover:bg-purple-900"
+              >
+                Confirmar Pet
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section className="space-y-5 lg:col-span-7">
+          {pets.length === 0 ? (
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
+              Nenhum pet cadastrado no momento. Utilize o formulário ao lado
+              para adicionar o primeiro pet.
+            </div>
+          ) : (
+            pets.map((pet) => (
+              <article
+                key={pet.id}
+                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="text-xl font-bold text-slate-900">
+                    {pet.name}
+                  </h3>
+                  <span className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-900">
+                    {pet.species}
+                  </span>
                 </div>
-              )}
-            </div>
-          </div>
-        ))}
+
+                <p className="mt-2 text-sm text-slate-700">{pet.ageOrNotes}</p>
+
+                <div className="mt-5 border-t border-slate-100 pt-4">
+                  <label
+                    htmlFor={`obs-pet-${pet.id}`}
+                    className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600"
+                  >
+                    Observações Gravadas do Pet
+                  </label>
+
+                  {pet.observations.length > 0 && (
+                    <ul className="mb-3 space-y-1.5">
+                      {pet.observations.map((obs) => (
+                        <li
+                          key={obs.id}
+                          className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800"
+                        >
+                          <span className="font-semibold text-purple-900">
+                            [{obs.createdAt}]
+                          </span>{" "}
+                          {obs.text}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <input
+                      id={`obs-pet-${pet.id}`}
+                      type="text"
+                      value={obsInputs[pet.id] || ""}
+                      onChange={(e) =>
+                        setObsInputs((prev) => ({
+                          ...prev,
+                          [pet.id]: e.target.value,
+                        }))
+                      }
+                      placeholder="Escreva uma observação para gravar..."
+                      className="flex-1 rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-purple-700 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleSavePetObs(pet.id)}
+                      className="rounded-lg border border-purple-900 bg-purple-800 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-900"
+                    >
+                      Gravar Observação
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))
+          )}
+        </section>
       </div>
     </div>
   );
-}
+};

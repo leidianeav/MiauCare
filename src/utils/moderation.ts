@@ -1,46 +1,41 @@
-import type { ModerationResult } from "../types/miaucare";
-
-const SWEAR_PT: readonly string[] = [
-  "merda", "porra", "caralho", "fdp", "foda", "fodase", "filho da puta", "puta que pariu",
-  "otario", "otária", "cuzao", "cuzão", "buceta", "arrombado", "arrombada",
-  "desgraca", "desgraça", "idiota", "imbecil", "retardado", "retardada",
-  "vadia", "vagabundo", "vagabunda", "safado", "safada", "cretino", "cretina",
-  "lixo", "palhaço", "palhaco", "inutil", "inútil", "estupido", "estúpido",
-];
-
-function normalizeForFilter(input: string): string {
-  return String(input || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z\s]/g, " ");
+export interface ModerationResult {
+  flagged: boolean;
+  reasons: string[];
+  sanitizedText: string;
 }
 
-export function containsSwear(text: string): boolean {
-  const norm = normalizeForFilter(text);
-  return SWEAR_PT.some((word) => {
-    const wn = normalizeForFilter(word);
-    return wn.length > 0 && norm.includes(wn);
-  });
-}
-
-const IMG_BAD: readonly string[] = [
-  "nude", "naked", "nsfw", "porn", "xxx", "explicit", "lewd", "erotic", "topless", "adult_content",
+const SENSITIVE_PATTERNS: Array<{ pattern: RegExp; reason: string }> = [
+  {
+    pattern: /\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/,
+    reason: "Possível CPF informado na mensagem",
+  },
+  {
+    pattern: /\b(senha|password|pin|c[oó]digo\s+do\s+alarme)\b/i,
+    reason: "Referência a senha ou código de acesso",
+  },
+  {
+    pattern: /\b(chave\s+pix|pix|cart[aã]o\s+de\s+cr[eé]dito|cvv)\b/i,
+    reason: "Referência a dados financeiros ou de pagamento",
+  },
+  {
+    pattern: /\b(chave\s+de\s+casa|c[oó]pia\s+da\s+chave)\b/i,
+    reason: "Referência a chaves de acesso ao imóvel",
+  },
 ];
 
-export function moderateImageFile(file: File | undefined | null): ModerationResult {
-  const name = String(file?.name || "").toLowerCase();
-  if (IMG_BAD.some((token) => name.includes(token))) {
-    return {
-      ok: false,
-      reason: "Conteúdo potencialmente impróprio detectado. Envio bloqueado pela política MiauCare.",
-    };
+export function moderateMessageText(rawText: string): ModerationResult {
+  const sanitizedText = rawText.replace(/\s+/g, " ").trim();
+  const reasons: string[] = [];
+
+  for (const item of SENSITIVE_PATTERNS) {
+    if (item.pattern.test(sanitizedText)) {
+      reasons.push(item.reason);
+    }
   }
-  if ((file?.size || 0) > 50 * 1024 * 1024) {
-    return {
-      ok: false,
-      reason: "Arquivo muito grande. Máximo permitido: 50 MB.",
-    };
-  }
-  return { ok: true };
+
+  return {
+    flagged: reasons.length > 0,
+    reasons,
+    sanitizedText,
+  };
 }
