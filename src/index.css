@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+html.font-lg {
+  font-size: 18px;
+}
+
+html.font-xl {
+  font-size: 20px;
+}
+
+html.high-contrast body {
+  background-color: #0b0b12 !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast .bg-white,
+html.high-contrast .bg-slate-50,
+html.high-contrast .bg-purple-50,
+html.high-contrast .bg-amber-50,
+html.high-contrast .bg-emerald-50 {
+  background-color: #161625 !important;
+  color: #ffffff !important;
+  border-color: #a855f7 !important;
+}
+
+html.high-contrast .text-slate-900,
+html.high-contrast .text-slate-800,
+html.high-contrast .text-slate-700,
+html.high-contrast .text-slate-600,
+html.high-contrast .text-slate-500,
+html.high-contrast .text-purple-900,
+html.high-contrast .text-purple-800,
+html.high-contrast .text-purple-700 {
+  color: #f8fafc !important;
+}
