@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import type { AuthModalMode, CourseProgress, FontScale, NavPage, PetItem, UserProfile } from "./types/miaucare";
-import { BrandLogo } from "./components/brandlogo";
-import { AuthModal } from "./components/authmodal";
-import { HomeView } from "./views/homeview";
-import { LoggedHomeView } from "./views/loggedhomeview";
-import { WorkspaceView } from "./views/workspaceview";
-import { MyPetsView } from "./views/mypetsview";
-import { ChatView } from "./views/chatview";
-import { CourseView } from "./views/courseview";
-import { ProfileView } from "./views/profileview";
+import { BrandLogo } from "./components/BrandLogo";
+import { AuthModal } from "./components/AuthModal";
+import { HomeView } from "./views/HomeView";
+import { LoggedHomeView } from "./views/LoggedHomeView";
+import { WorkspaceView } from "./views/WorkspaceView";
+import { MyPetsView } from "./views/MyPetsView";
+import { ChatView } from "./views/ChatView";
+import { CourseView } from "./views/CourseView";
+import { ProfileView } from "./views/ProfileView";
 
 let _petSeq = 10;
 

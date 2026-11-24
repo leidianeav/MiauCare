@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { CourseProgress, UserProfile } from "../types/miaucare";
-import { BrandLogo } from "../components/brandlogo";
+import { BrandLogo } from "../components/BrandLogo";
 import { sanitizeText } from "../utils/security";
 
 interface CourseViewProps {

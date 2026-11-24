@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CourseScrollBanner } from "../components/coursescrollbanner";
+import { CourseScrollBanner } from "../components/CourseScrollBanner";
 import { SPECIES_ICONS } from "../utils/species";
 
 interface HomeViewProps {

@@ -1,11 +1,6 @@
 # MiauCare — Projeto Final de Interface Homem-Máquina (UNIUBE)
 
 Disciplina: Interface Homem-Máquina — Prof. Dr. Eduardo Chagas de Oliveira.
-RA - Alunos: 
-5186588 - Leidiane de Almeida Vaz
-5186755 - João Marcos de Oliveira Machado
-5186730 - João Pedro Naves Ramos
-5186289 - João Lucas Aquino Silva
 
 ## Estrutura de Arquivos e Pastas
 - `src/types/miaucare.ts` — Contratos e tipos TypeScript do domínio.

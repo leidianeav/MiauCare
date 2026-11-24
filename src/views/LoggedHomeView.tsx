@@ -1,5 +1,5 @@
 import type { NavPage, PetItem, UserProfile } from "../types/miaucare";
-import { CourseScrollBanner } from "../components/coursescrollbanner";
+import { CourseScrollBanner } from "../components/CourseScrollBanner";
 import { maskContact, sanitizeText } from "../utils/security";
 
 interface LoggedHomeViewProps {
